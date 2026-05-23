@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>KDV Hesaplama</title>
 
+<link rel="icon" type="image/png" sizes="512x512" href="tag-512.png">
+<link rel="apple-touch-icon" href="tag-512.png">
+
 <style>
 
 *{
@@ -30,6 +33,10 @@ body{
     border-radius:18px;
     padding:26px;
     box-shadow:0 6px 18px rgba(0,0,0,0.08);
+
+    /* 🔥 footer aşağı insin */
+    display:flex;
+    flex-direction:column;
 }
 
 .input-group{
@@ -60,6 +67,8 @@ button{
     font-size:15px;
     text-align:center;
     background:#fff;
+    font-weight:400;
+    transition:.15s;
 }
 
 input:focus,
@@ -71,17 +80,20 @@ select:focus{
 
 .main-btn{
     flex:1;
+    background:#fff;
+    color:#2c3e50;
     font-weight:600;
-}
-
-.reset-btn{
-    width:46px;
-    min-width:46px;
+    cursor:pointer;
 }
 
 button.clicked-blue{
     border-color:#8fd4ae !important;
     box-shadow:0 0 0 4px rgba(143,212,174,0.45) !important;
+}
+
+.reset-btn{
+    width:46px;
+    min-width:46px;
 }
 
 .reset-btn.active-reset{
@@ -106,18 +118,16 @@ button.clicked-blue{
 .highlight{
     float:right;
     font-weight:700;
+    color:#2c3e50;
 }
 
-/* 🔻 FOOTER SABİT EN ALT */
-.footer{
-    position:fixed;
-    bottom:8px;
-    left:0;
-    width:100%;
+/* 🔻 FOOTER */
+.creator{
+    margin-top:auto;
+    padding-top:15px;
     text-align:center;
     font-size:12px;
     color:#9aa6b2;
-    pointer-events:none;
 }
 
 </style>
@@ -129,12 +139,15 @@ button.clicked-blue{
 
 <div class="input-group">
 <label>KDV Dahil Fiyat</label>
+<div class="field-container">
 <input id="kdvDahil" type="text" inputmode="decimal">
+<div class="clear-btn" onclick="temizle(event,'kdvDahil')">×</div>
+</div>
 </div>
 
 <div class="input-group">
 <label>KDV %</label>
-<select id="kdv">
+<select id="kdv" class="gray-bg">
 <option value="1">%1</option>
 <option value="10">%10</option>
 <option value="20">%20</option>
@@ -147,18 +160,34 @@ button.clicked-blue{
 </div>
 
 <div class="result" id="sonuc">
-<p><b>KDV Tutarı</b> <span id="kdvTutar" class="highlight"></span></p>
-<p><b>KDV Hariç</b> <span id="haric" class="highlight"></span></p>
-</div>
+
+<p>
+<b>KDV Tutarı (<span id="oran"></span>)</b>
+<span id="kdvTutar" class="highlight"></span>
+</p>
+
+<p>
+<b>KDV Hariç Tutar</b>
+<span id="haric" class="highlight"></span>
+</p>
 
 </div>
 
-<!-- 🔻 EN ALTTA SABİT -->
-<div class="footer">
+<!-- 🔻 EN ALTTA BEYAZ KUTU İÇİ -->
+<div class="creator">
 Created by Fatih Mersin
 </div>
 
+</div>
+
 <script>
+
+function temizle(e,id){
+    e.preventDefault();
+    document.getElementById(id).value="";
+    durumGuncelle();
+    setTimeout(()=>document.getElementById(id).focus(),10);
+}
 
 function g(id){
     let v=document.getElementById(id).value.trim();
@@ -168,23 +197,74 @@ function g(id){
 
 function hesapla(){
 
-    let dahil=g("kdvDahil");
-    let kdv=parseFloat(document.getElementById("kdv").value);
+    document.getElementById("hesaplaBtn")
+        .classList.add("clicked-blue");
 
-    let haric=dahil/(1+kdv/100);
-    let kdvTutar=dahil-haric;
+    let dahil = g("kdvDahil");
+    let kdv = parseFloat(document.getElementById("kdv").value);
 
-    document.getElementById("kdvTutar").innerText=kdvTutar.toFixed(2);
-    document.getElementById("haric").innerText=haric.toFixed(2);
+    let haric = dahil / (1 + (kdv/100));
+    let kdvTutar = dahil - haric;
+
+    document.getElementById("oran").innerText = "%" + kdv;
+    document.getElementById("kdvTutar").innerText = kdvTutar.toFixed(2);
+    document.getElementById("haric").innerText = haric.toFixed(2);
 
     document.getElementById("sonuc").style.display="block";
 }
 
+function durumGuncelle(){
+
+    document.getElementById("hesaplaBtn")
+        .classList.remove("clicked-blue");
+
+    document.getElementById("sonuc")
+        .style.display="none";
+
+    document.querySelector(".reset-btn")
+        .classList.remove("active-reset");
+}
+
+document.querySelectorAll("input, select").forEach(el=>{
+    el.addEventListener("input", durumGuncelle);
+    el.addEventListener("change", durumGuncelle);
+});
+
+const alanlar = Array.from(document.querySelectorAll("input, select"));
+
+alanlar.forEach((el,i)=>{
+    el.addEventListener("keydown",(e)=>{
+        if(e.key==="Enter"){
+            e.preventDefault();
+            document.activeElement.blur();
+
+            let next = alanlar[i+1];
+
+            if(next){
+                setTimeout(()=>{
+                    next.focus();
+                    if(next.tagName==="INPUT") next.select();
+                },0);
+            }else{
+                hesapla();
+            }
+        }
+    });
+});
+
 function sifirla(e){
+
     e.preventDefault();
 
-    document.getElementById("kdvDahil").value="";
-    document.getElementById("sonuc").style.display="none";
+    document.querySelectorAll("input").forEach(i=>i.value="");
+    document.querySelectorAll("select").forEach(s=>s.selectedIndex=0);
+
+    durumGuncelle();
+
+    document.querySelector(".reset-btn")
+        .classList.add("active-reset");
+
+    document.activeElement.blur();
 }
 
 </script>
