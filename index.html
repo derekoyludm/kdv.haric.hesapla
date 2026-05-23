@@ -74,7 +74,6 @@ select:focus{
     box-shadow:0 0 0 4px rgba(143,212,174,0.35);
 }
 
-/* HESAPLA */
 .main-btn{
     flex:1;
     background:#fff;
@@ -92,7 +91,6 @@ button.clicked-blue{
     box-shadow:0 0 0 4px rgba(143,212,174,0.45) !important;
 }
 
-/* RESET */
 .reset-btn{
     width:46px;
     min-width:46px;
@@ -108,7 +106,6 @@ button.clicked-blue{
     background:#f6f8fa;
 }
 
-/* KIRMIZI RESET */
 .reset-btn.active-reset{
     border-color:#e74c3c;
     box-shadow:0 0 0 4px rgba(231,76,60,0.35);
@@ -159,10 +156,11 @@ button.clicked-blue{
 }
 
 .creator{
-    margin-top:22px;
+    margin-top:18px;
     text-align:center;
     font-size:12px;
     color:#9aa6b2;
+    letter-spacing:.4px;
 }
 
 </style>
@@ -208,6 +206,11 @@ button.clicked-blue{
 
 </div>
 
+</div>
+
+<!-- 🔻 EN ALTTA YAZI -->
+<div class="creator">
+Created by Fatih Mersin
 </div>
 
 <script>
@@ -260,33 +263,23 @@ document.querySelectorAll("input, select").forEach(el=>{
     el.addEventListener("change", durumGuncelle);
 });
 
-/* 🔥 ENTER İLE KUTULAR ARASI GEÇİŞ */
 const alanlar = Array.from(document.querySelectorAll("input, select"));
 
-alanlar.forEach((el, i) => {
-    el.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") {
-
+alanlar.forEach((el,i)=>{
+    el.addEventListener("keydown",(e)=>{
+        if(e.key==="Enter"){
             e.preventDefault();
             document.activeElement.blur();
 
-            let next = alanlar[i + 1];
+            let next = alanlar[i+1];
 
-            if (next) {
-
-                setTimeout(() => {
+            if(next){
+                setTimeout(()=>{
                     next.focus();
-
-                    if (next.tagName === "INPUT") {
-                        next.select();
-                    }
-
-                }, 0);
-
-            } else {
-
+                    if(next.tagName==="INPUT") next.select();
+                },0);
+            }else{
                 hesapla();
-
             }
         }
     });
