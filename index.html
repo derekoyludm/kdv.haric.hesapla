@@ -21,7 +21,6 @@ body{
     padding:20px;
     background:#eef2f5;
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;
-
     display:flex;
     justify-content:center;
     align-items:center;
@@ -75,25 +74,17 @@ select:focus{
     box-shadow:0 0 0 4px rgba(143,212,174,0.35);
 }
 
+/* HESAPLA */
 .main-btn{
     flex:1;
     background:#fff;
     color:#2c3e50;
     font-weight:600;
     cursor:pointer;
-    border:1.5px solid #c9d2dc;
-    transition:.15s;
 }
 
 .main-btn:hover{
     background:#f6f8fa;
-}
-
-.main-btn:focus,
-.main-btn:active{
-    outline:none;
-    border-color:#8fd4ae;
-    box-shadow:0 0 0 4px rgba(143,212,174,0.35);
 }
 
 button.clicked-blue{
@@ -101,6 +92,7 @@ button.clicked-blue{
     box-shadow:0 0 0 4px rgba(143,212,174,0.45) !important;
 }
 
+/* RESET */
 .reset-btn{
     width:46px;
     min-width:46px;
@@ -110,17 +102,14 @@ button.clicked-blue{
     border-radius:8px;
     cursor:pointer;
     font-size:16px;
-    transition:.15s;
 }
 
 .reset-btn:hover{
     background:#f6f8fa;
 }
 
-.reset-btn:focus,
-.reset-btn:active,
+/* KIRMIZI RESET */
 .reset-btn.active-reset{
-    outline:none;
     border-color:#e74c3c;
     box-shadow:0 0 0 4px rgba(231,76,60,0.35);
 }
@@ -137,10 +126,6 @@ button.clicked-blue{
     color:#fff;
     font-weight:600;
     cursor:pointer;
-}
-
-.clear-btn:hover{
-    background:#2587ca;
 }
 
 .gray-bg{
@@ -178,7 +163,6 @@ button.clicked-blue{
     text-align:center;
     font-size:12px;
     color:#9aa6b2;
-    letter-spacing:.4px;
 }
 
 </style>
@@ -191,7 +175,7 @@ button.clicked-blue{
 <div class="input-group">
 <label>KDV Dahil Fiyat</label>
 <div class="field-container">
-<input id="kdvDahil" type="tel">
+<input id="kdvDahil" type="text" inputmode="decimal">
 <div class="clear-btn" onclick="temizle(event,'kdvDahil')">×</div>
 </div>
 </div>
@@ -224,10 +208,6 @@ button.clicked-blue{
 
 </div>
 
-<div class="creator">
-Created by Fatih Mersin
-</div>
-
 </div>
 
 <script>
@@ -235,7 +215,7 @@ Created by Fatih Mersin
 function temizle(e,id){
     e.preventDefault();
     document.getElementById(id).value="";
-    hesapGecersizYap();
+    durumGuncelle();
     setTimeout(()=>document.getElementById(id).focus(),10);
 }
 
@@ -247,58 +227,84 @@ function g(id){
 
 function hesapla(){
 
-    let btn=document.getElementById("hesaplaBtn");
-    btn.classList.add("clicked-blue");
+    document.getElementById("hesaplaBtn")
+        .classList.add("clicked-blue");
 
-    let dahil=g("kdvDahil");
-    let kdv=parseFloat(document.getElementById("kdv").value);
+    let dahil = g("kdvDahil");
+    let kdv = parseFloat(document.getElementById("kdv").value);
 
-    let haric=dahil/(1+(kdv/100));
-    let kdvTutar=dahil-haric;
+    let haric = dahil / (1 + (kdv/100));
+    let kdvTutar = dahil - haric;
 
-    document.getElementById("oran").innerText="%"+kdv;
-    document.getElementById("kdvTutar").innerText=kdvTutar.toFixed(2);
-    document.getElementById("haric").innerText=haric.toFixed(2);
+    document.getElementById("oran").innerText = "%" + kdv;
+    document.getElementById("kdvTutar").innerText = kdvTutar.toFixed(2);
+    document.getElementById("haric").innerText = haric.toFixed(2);
 
     document.getElementById("sonuc").style.display="block";
 }
 
-function hesapGecersizYap(){
-    document.getElementById("sonuc").style.display="none";
-    document.getElementById("hesaplaBtn").classList.remove("clicked-blue");
+function durumGuncelle(){
+
+    document.getElementById("hesaplaBtn")
+        .classList.remove("clicked-blue");
+
+    document.getElementById("sonuc")
+        .style.display="none";
+
+    document.querySelector(".reset-btn")
+        .classList.remove("active-reset");
 }
 
-document.querySelectorAll("input,select").forEach(el=>{
-    el.addEventListener("input",hesapGecersizYap);
-    el.addEventListener("change",hesapGecersizYap);
+document.querySelectorAll("input, select").forEach(el=>{
+    el.addEventListener("input", durumGuncelle);
+    el.addEventListener("change", durumGuncelle);
 });
 
-const alanlar=[...document.querySelectorAll("input,select")];
+/* 🔥 ENTER İLE KUTULAR ARASI GEÇİŞ */
+const alanlar = Array.from(document.querySelectorAll("input, select"));
 
-alanlar.forEach((el,i)=>{
-    el.addEventListener("keydown",(e)=>{
-        if(e.key==="Enter"){
+alanlar.forEach((el, i) => {
+    el.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+
             e.preventDefault();
             document.activeElement.blur();
-            let next=alanlar[i+1];
-            if(next){
-                setTimeout(()=>{
+
+            let next = alanlar[i + 1];
+
+            if (next) {
+
+                setTimeout(() => {
                     next.focus();
-                    if(next.tagName==="INPUT") next.select();
-                },0);
-            }else{
+
+                    if (next.tagName === "INPUT") {
+                        next.select();
+                    }
+
+                }, 0);
+
+            } else {
+
                 hesapla();
+
             }
         }
     });
 });
 
 function sifirla(e){
+
     e.preventDefault();
+
     document.querySelectorAll("input").forEach(i=>i.value="");
     document.querySelectorAll("select").forEach(s=>s.selectedIndex=0);
-    document.getElementById("sonuc").style.display="none";
-    document.getElementById("hesaplaBtn").classList.remove("clicked-blue");
+
+    durumGuncelle();
+
+    document.querySelector(".reset-btn")
+        .classList.add("active-reset");
+
+    document.activeElement.blur();
 }
 
 </script>
