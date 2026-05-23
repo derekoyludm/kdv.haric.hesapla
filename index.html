@@ -33,8 +33,6 @@ body{
     border-radius:18px;
     padding:26px;
     box-shadow:0 6px 18px rgba(0,0,0,0.08);
-
-    /* 🔥 footer aşağı insin */
     display:flex;
     flex-direction:column;
 }
@@ -121,7 +119,6 @@ button.clicked-blue{
     color:#2c3e50;
 }
 
-/* 🔻 FOOTER */
 .creator{
     margin-top:auto;
     padding-top:15px;
@@ -147,7 +144,7 @@ button.clicked-blue{
 
 <div class="input-group">
 <label>KDV %</label>
-<select id="kdv" class="gray-bg">
+<select id="kdv">
 <option value="1">%1</option>
 <option value="10">%10</option>
 <option value="20">%20</option>
@@ -173,7 +170,6 @@ button.clicked-blue{
 
 </div>
 
-<!-- 🔻 EN ALTTA BEYAZ KUTU İÇİ -->
 <div class="creator">
 Created by Fatih Mersin
 </div>
@@ -195,6 +191,14 @@ function g(id){
     return parseFloat(v.replace(/\./g,"").replace(/,/g,".")) || 0;
 }
 
+/* 🔥 TR FORMAT (4 HANE) */
+function formatTR(num){
+    return num.toLocaleString('tr-TR',{
+        minimumFractionDigits:4,
+        maximumFractionDigits:4
+    });
+}
+
 function hesapla(){
 
     document.getElementById("hesaplaBtn")
@@ -207,8 +211,8 @@ function hesapla(){
     let kdvTutar = dahil - haric;
 
     document.getElementById("oran").innerText = "%" + kdv;
-    document.getElementById("kdvTutar").innerText = kdvTutar.toFixed(2);
-    document.getElementById("haric").innerText = haric.toFixed(2);
+    document.getElementById("kdvTutar").innerText = formatTR(kdvTutar);
+    document.getElementById("haric").innerText = formatTR(haric);
 
     document.getElementById("sonuc").style.display="block";
 }
