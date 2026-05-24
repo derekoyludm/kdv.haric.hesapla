@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, user-scalable=no">
 <title>KDV Hesaplama</title>
 
 <link rel="icon" type="image/png" sizes="512x512" href="tag-512.png">
@@ -15,26 +15,37 @@
     -webkit-tap-highlight-color:transparent;
 }
 
+/* 🟢 Hem bilgisayarda hem telefonda dikey ve yatay tam ortalama sağlayan esnek yapı */
 body{
     margin:0;
-    min-height:100vh;
     padding:20px;
     background:#eef2f5;
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;
     display:flex;
     justify-content:center;
     align-items:center;
+    min-height: 100vh;
 }
 
+/* 🟢 Kutunun genişlik dengesini hem PC hem mobil için koruyan alan */
 .container{
     width:100%;
-    max-width:470px;
+    max-width:440px; /* Standart ideal genişlik */
     background:#fff;
     border-radius:18px;
     padding:26px;
     box-shadow:0 6px 18px rgba(0,0,0,0.08);
+    margin: auto; 
     display:flex;
     flex-direction:column;
+}
+
+h2{
+    margin:0 0 18px 0;
+    text-align:center;
+    font-size:18px;
+    font-weight:600;
+    color:#2c3e50;
 }
 
 .input-group{
@@ -62,18 +73,25 @@ button{
     height:46px;
     border:1.5px solid #c9d2dc;
     border-radius:8px;
-    font-size:15px;
+    font-size:16px; 
     text-align:center;
     background:#fff;
     font-weight:400;
     transition:.15s;
 }
 
+/* 🟢 Mobil cihazlarda input veya select'e tıklayınca sayfanın otomatik zoom yapmasını engeller */
+input:focus,
+select:focus {
+    font-size: 16px !important;
+}
+
 input:focus,
 select:focus{
-    outline:none;
-    border-color:#8fd4ae;
-    box-shadow:0 0 0 4px rgba(143,212,174,0.35);
+    outline:none !important;
+    -webkit-fullscreen-control-style: none;
+    border-color:#8fd4ae !important;
+    box-shadow:0 0 0 4px rgba(143,212,174,0.45) !important;
 }
 
 .main-btn{
@@ -82,8 +100,22 @@ select:focus{
     color:#2c3e50;
     font-weight:600;
     cursor:pointer;
+    border:1.5px solid #c9d2dc;
+    transition:.15s;
 }
 
+.main-btn:hover{
+    background:#f6f8fa;
+}
+
+.main-btn:focus,
+.main-btn:active{
+    outline:none;
+    border-color:#8fd4ae;
+    box-shadow:0 0 0 4px rgba(143,212,174,0.35);
+}
+
+/* 🟢 Hesapla butonuna basıldığında aktif kalacak stil */
 button.clicked-blue{
     border-color:#8fd4ae !important;
     box-shadow:0 0 0 4px rgba(143,212,174,0.45) !important;
@@ -92,11 +124,45 @@ button.clicked-blue{
 .reset-btn{
     width:46px;
     min-width:46px;
+    background:#fff;
+    color:#2c3e50;
+    border:1.5px solid #c9d2dc;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:16px;
+    transition:.15s;
 }
 
+.reset-btn:hover{
+    background:#f6f8fa;
+}
+
+.reset-btn:focus,
+.reset-btn:active,
 .reset-btn.active-reset{
+    outline:none;
     border-color:#e74c3c;
     box-shadow:0 0 0 4px rgba(231,76,60,0.35);
+}
+
+/* 🟢 Eksik olan temizleme butonu stili eklendi */
+.clear-btn{
+    width:40px;
+    height:46px;
+    min-width:40px;
+    background:#3498db;
+    border-radius:8px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#fff;
+    font-weight:600;
+    cursor:pointer;
+    user-select: none;
+}
+
+.clear-btn:hover{
+    background:#2587ca;
 }
 
 .button-row{
@@ -113,6 +179,12 @@ button.clicked-blue{
     border-radius:10px;
 }
 
+.result p{
+    margin:8px 0;
+    font-size:14px;
+    color:#3d4f66;
+}
+
 .highlight{
     float:right;
     font-weight:700;
@@ -120,11 +192,11 @@ button.clicked-blue{
 }
 
 .creator{
-    margin-top:auto;
-    padding-top:15px;
+    margin-top:22px;
     text-align:center;
     font-size:12px;
     color:#9aa6b2;
+    letter-spacing:.4px;
 }
 
 </style>
@@ -134,11 +206,13 @@ button.clicked-blue{
 
 <div class="container">
 
+<h2>KDV Hesaplama</h2>
+
 <div class="input-group">
 <label>KDV Dahil Fiyat</label>
 <div class="field-container">
 <input id="kdvDahil" type="text" inputmode="decimal">
-<div class="clear-btn" onclick="temizle(event,'kdvDahil')">×</div>
+<div class="clear-btn" ontouchstart="temizle(event,'kdvDahil')" onclick="temizle(event,'kdvDahil')">×</div>
 </div>
 </div>
 
@@ -160,12 +234,12 @@ button.clicked-blue{
 
 <p>
 <b>KDV Tutarı (<span id="oran"></span>)</b>
-<span id="kdvTutar" class="highlight"></span>
+<span id="kdvTutar" class="highlight">0,0000</span>
 </p>
 
 <p>
 <b>KDV Hariç Tutar</b>
-<span id="haric" class="highlight"></span>
+<span id="haric" class="highlight">0,0000</span>
 </p>
 
 </div>
@@ -178,20 +252,33 @@ Created by Fatih Mersin
 
 <script>
 
+// Temizleme Fonksiyonu
 function temizle(e,id){
     e.preventDefault();
-    document.getElementById(id).value="";
-    durumGuncelle();
-    setTimeout(()=>document.getElementById(id).focus(),10);
+    e.stopPropagation();
+    
+    let el = document.getElementById(id);
+    el.value = ""; 
+    durumGuncelle(); 
+    
+    el.focus();
+    
+    setTimeout(() => {
+        el.focus();
+        if(typeof el.setSelectionRange === "function") {
+            el.setSelectionRange(0, 0); 
+        }
+    }, 10);
 }
 
+// Türkçe Formatlı Değer Okuma
 function g(id){
     let v=document.getElementById(id).value.trim();
     if(!v) return 0;
     return parseFloat(v.replace(/\./g,"").replace(/,/g,".")) || 0;
 }
 
-/* 🔥 TR FORMAT (4 HANE) */
+// TR Formatlama (4 Hane Hassasiyet)
 function formatTR(num){
     return num.toLocaleString('tr-TR',{
         minimumFractionDigits:4,
@@ -199,10 +286,12 @@ function formatTR(num){
     });
 }
 
+// Hesaplama Fonksiyonu
 function hesapla(){
+    // Tüm odaklanmaları kaldırarak yeşil çerçeveleri temizle
+    document.querySelectorAll("input, select").forEach(i => i.blur());
 
-    document.getElementById("hesaplaBtn")
-        .classList.add("clicked-blue");
+    document.getElementById("hesaplaBtn").classList.add("clicked-blue");
 
     let dahil = g("kdvDahil");
     let kdv = parseFloat(document.getElementById("kdv").value);
@@ -217,25 +306,27 @@ function hesapla(){
     document.getElementById("sonuc").style.display="block";
 }
 
+// Hesap Sonucunu Gizleme (UI Reset)
 function durumGuncelle(){
-
-    document.getElementById("hesaplaBtn")
-        .classList.remove("clicked-blue");
-
-    document.getElementById("sonuc")
-        .style.display="none";
-
-    document.querySelector(".reset-btn")
-        .classList.remove("active-reset");
+    document.getElementById("sonuc").style.display="none";
+    document.getElementById("hesaplaBtn").classList.remove("clicked-blue");
+    document.querySelector(".reset-btn").classList.remove("active-reset");
 }
 
+// Giriş ve Değişiklik Dinleyicileri
 document.querySelectorAll("input, select").forEach(el=>{
     el.addEventListener("input", durumGuncelle);
     el.addEventListener("change", durumGuncelle);
+    
+    if(el.tagName === "INPUT") {
+        el.addEventListener("focus", () => {
+            setTimeout(() => { el.select(); }, 50);
+        });
+    }
 });
 
+// Enter Tuşu ile Sıralı Geçiş ve Hesaplama
 const alanlar = Array.from(document.querySelectorAll("input, select"));
-
 alanlar.forEach((el,i)=>{
     el.addEventListener("keydown",(e)=>{
         if(e.key==="Enter"){
@@ -243,7 +334,6 @@ alanlar.forEach((el,i)=>{
             document.activeElement.blur();
 
             let next = alanlar[i+1];
-
             if(next){
                 setTimeout(()=>{
                     next.focus();
@@ -256,8 +346,8 @@ alanlar.forEach((el,i)=>{
     });
 });
 
+// Sıfırlama (↺) Fonksiyonu
 function sifirla(e){
-
     e.preventDefault();
 
     document.querySelectorAll("input").forEach(i=>i.value="");
@@ -265,8 +355,8 @@ function sifirla(e){
 
     durumGuncelle();
 
-    document.querySelector(".reset-btn")
-        .classList.add("active-reset");
+    let resetBtn = e.currentTarget;
+    resetBtn.classList.add("active-reset");
 
     document.activeElement.blur();
 }
