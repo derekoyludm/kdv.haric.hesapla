@@ -15,7 +15,6 @@
     -webkit-tap-highlight-color:transparent;
 }
 
-/* 🟢 Hem bilgisayarda hem telefonda dikey ve yatay tam ortalama sağlayan esnek yapı */
 body{
     margin:0;
     padding:20px;
@@ -27,10 +26,9 @@ body{
     min-height: 100vh;
 }
 
-/* 🟢 Kutunun genişlik dengesini hem PC hem mobil için koruyan alan */
 .container{
     width:100%;
-    max-width:440px; /* Standart ideal genişlik */
+    max-width:440px;
     background:#fff;
     border-radius:18px;
     padding:26px;
@@ -80,15 +78,28 @@ button{
     transition:.15s;
 }
 
-/* 🟢 Mobil cihazlarda input veya select'e tıklayınca sayfanın otomatik zoom yapmasını engeller */
+/* 🟢 Mobil cihazlarda select kutusunun varsayılan gölgelerini sıfırlar ve yeşil odağı açar */
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236b7a90' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+    padding-right: 30px; 
+}
+
 input:focus,
 select:focus {
     font-size: 16px !important;
 }
 
+/* 🟢 Hem input hem de select için telefonda açık yeşil parlamayı zorunlu hale getiren alan */
 input:focus,
 select:focus{
     outline:none !important;
+    outline-width: 0 !important;
     -webkit-fullscreen-control-style: none;
     border-color:#8fd4ae !important;
     box-shadow:0 0 0 4px rgba(143,212,174,0.45) !important;
@@ -115,7 +126,6 @@ select:focus{
     box-shadow:0 0 0 4px rgba(143,212,174,0.35);
 }
 
-/* 🟢 Hesapla butonuna basıldığında aktif kalacak stil */
 button.clicked-blue{
     border-color:#8fd4ae !important;
     box-shadow:0 0 0 4px rgba(143,212,174,0.45) !important;
@@ -145,7 +155,6 @@ button.clicked-blue{
     box-shadow:0 0 0 4px rgba(231,76,60,0.35);
 }
 
-/* 🟢 Eksik olan temizleme butonu stili eklendi */
 .clear-btn{
     width:40px;
     height:46px;
@@ -252,7 +261,6 @@ Created by Fatih Mersin
 
 <script>
 
-// Temizleme Fonksiyonu
 function temizle(e,id){
     e.preventDefault();
     e.stopPropagation();
@@ -271,14 +279,12 @@ function temizle(e,id){
     }, 10);
 }
 
-// Türkçe Formatlı Değer Okuma
 function g(id){
     let v=document.getElementById(id).value.trim();
     if(!v) return 0;
     return parseFloat(v.replace(/\./g,"").replace(/,/g,".")) || 0;
 }
 
-// TR Formatlama (4 Hane Hassasiyet)
 function formatTR(num){
     return num.toLocaleString('tr-TR',{
         minimumFractionDigits:4,
@@ -286,9 +292,7 @@ function formatTR(num){
     });
 }
 
-// Hesaplama Fonksiyonu
 function hesapla(){
-    // Tüm odaklanmaları kaldırarak yeşil çerçeveleri temizle
     document.querySelectorAll("input, select").forEach(i => i.blur());
 
     document.getElementById("hesaplaBtn").classList.add("clicked-blue");
@@ -306,14 +310,12 @@ function hesapla(){
     document.getElementById("sonuc").style.display="block";
 }
 
-// Hesap Sonucunu Gizleme (UI Reset)
 function durumGuncelle(){
     document.getElementById("sonuc").style.display="none";
     document.getElementById("hesaplaBtn").classList.remove("clicked-blue");
     document.querySelector(".reset-btn").classList.remove("active-reset");
 }
 
-// Giriş ve Değişiklik Dinleyicileri
 document.querySelectorAll("input, select").forEach(el=>{
     el.addEventListener("input", durumGuncelle);
     el.addEventListener("change", durumGuncelle);
@@ -325,7 +327,6 @@ document.querySelectorAll("input, select").forEach(el=>{
     }
 });
 
-// Enter Tuşu ile Sıralı Geçiş ve Hesaplama
 const alanlar = Array.from(document.querySelectorAll("input, select"));
 alanlar.forEach((el,i)=>{
     el.addEventListener("keydown",(e)=>{
@@ -346,7 +347,6 @@ alanlar.forEach((el,i)=>{
     });
 });
 
-// Sıfırlama (↺) Fonksiyonu
 function sifirla(e){
     e.preventDefault();
 
